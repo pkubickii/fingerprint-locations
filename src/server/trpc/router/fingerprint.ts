@@ -19,6 +19,23 @@ export const fingerprintRouter = router({
       console.log("error", error);
     }
   }),
+  getFingerprint: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.fingerprint_locations.findUnique({
+          where: {
+            id: input.id,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
   postFingerprint: protectedProcedure
     .input(
       z.object({
@@ -40,20 +57,24 @@ export const fingerprintRouter = router({
         console.log(error);
       }
     }),
-  editFingerprint: protectedProcedure
+  updateFingerprint: protectedProcedure
     .input(
       z.object({
+        id: z.string(),
         room: z.string(),
+        coord: z.string(),
         signal: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        await ctx.prisma.fingerprint_locations.updateMany({
+        await ctx.prisma.fingerprint_locations.update({
           where: {
-            room: input.room,
+            id: input.id,
           },
           data: {
+            room: input.room,
+            coord: input.coord,
             signal: input.signal,
           },
         });

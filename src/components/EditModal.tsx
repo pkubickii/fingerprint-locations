@@ -4,9 +4,14 @@ import React from "react";
 type EditModalProps = {
   isVisible: boolean;
   onClose: () => void;
+  children: React.ReactNode;
 };
 
-const EditModal: React.FC<EditModalProps> = ({ isVisible, onClose }) => {
+const EditModal: React.FC<EditModalProps> = ({
+  isVisible,
+  onClose,
+  children,
+}) => {
   if (!isVisible) return null;
 
   const handleClose = (e: MouseEvent<HTMLDivElement>) => {
@@ -30,7 +35,7 @@ const EditModal: React.FC<EditModalProps> = ({ isVisible, onClose }) => {
             onClick={(e) => e.stopPropagation()}
             className="rounded-xl bg-white p-2"
           >
-            Modal
+            <div>{children}</div>
           </div>
         </div>
       </div>

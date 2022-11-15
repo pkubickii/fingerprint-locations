@@ -4,44 +4,60 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EditModal from "../components/EditModal";
+import { EditIdContext } from "../context/EditIdContext";
+import { ModalContext } from "../context/ModalContext";
 
 const Home: NextPage = () => {
   //const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState("");
 
+  const { data: fingerprint } = trpc.fingerprint.getFingerprint.useQuery({
+    id: editId,
+  });
   return (
     <>
-      <Head>
-        <title>Fingerprint locations</title>
-        <meta name="description" content="fingerprint locations" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="justify-top-5 container mx-auto flex min-h-screen flex-col items-center p-4">
-        <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
-          Fingerprint <span className="text-sky-400">locations</span>
-        </h1>
-        <div>
-          <FingerLocations />
-        </div>
-        <div className="mt-8">
-          <AuthShowcase />
-        </div>
-        <button
-          className="mt-5 rounded-md border-2 border-zinc-800 from-sky-100 to-sky-500 p-2 hover:bg-gradient-to-br focus:outline-none"
-          onClick={() => setShowModal(true)}
-        >
-          Modal
-        </button>
-        <div>
-          <EditModal
-            isVisible={showModal}
-            onClose={() => setShowModal(false)}
-          />
-        </div>
-      </main>
+      <ModalContext.Provider value={{ showModal, setShowModal }}>
+        <EditIdContext.Provider value={{ editId, setEditId }}>
+          <Head>
+            <title>Fingerprint locations</title>
+            <meta name="description" content="fingerprint locations" />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          <main className="justify-top-5 container mx-auto flex min-h-screen flex-col items-center p-4">
+            <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
+              Fingerprint <span className="text-sky-400">locations</span>
+            </h1>
+            <div>
+              <FingerLocations />
+            </div>
+            <div className="mt-8">
+              <AuthShowcase />
+            </div>
+            <button
+              className="mt-5 rounded-md border-2 border-zinc-800 from-sky-100 to-sky-500 p-2 hover:bg-gradient-to-br focus:outline-none"
+              onClick={() => setShowModal(true)}
+            >
+              Modal
+            </button>
+            <div>
+              <EditModal
+                isVisible={showModal}
+                onClose={() => setShowModal(false)}
+              >
+                <FormUpdate
+                  id={fingerprint?.id}
+                  room={fingerprint?.room}
+                  coord={fingerprint?.coord}
+                  signal={fingerprint?.signal}
+                />
+              </EditModal>
+            </div>
+          </main>
+        </EditIdContext.Provider>
+      </ModalContext.Provider>
     </>
   );
 };
@@ -49,9 +65,11 @@ const Home: NextPage = () => {
 export default Home;
 
 const FingerLocations: React.FC = () => {
-  const [isVisible, setVisible] = useState(false);
-  const handleEdit = () => {
-    setVisible(!isVisible);
+  const editContext = useContext(EditIdContext);
+  const modalContext = useContext(ModalContext);
+  const handleEdit = (id: string) => {
+    editContext?.setEditId(id);
+    modalContext?.setShowModal(true);
   };
   const { data: fingerprints, isLoading } =
     trpc.fingerprint.getAllFingerprints.useQuery();
@@ -89,7 +107,7 @@ const FingerLocations: React.FC = () => {
             >
               Delete
             </button>
-            <button onClick={handleEdit}>Edit</button>
+            <button onClick={() => handleEdit(fingerprint.id)}>Edit</button>
           </section>
         );
       })}
@@ -157,6 +175,85 @@ const Form: React.FC = () => {
         minLength={2}
         maxLength={100}
         onChange={(event) => setSignal(event.target.value)}
+        className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
+      />
+      <button
+        type="submit"
+        className="rounded-md border-2 border-zinc-800 from-sky-100 to-sky-500 p-2 hover:bg-gradient-to-br focus:outline-none"
+      >
+        Submit
+      </button>
+    </form>
+  );
+};
+
+type FormUpdateProps = {
+  id: string | undefined;
+  room: string | undefined;
+  coord: string | null | undefined;
+  signal: string | null | undefined;
+};
+
+const FormUpdate: React.FC<FormUpdateProps> = ({ id, room, coord, signal }) => {
+  const [idForm, setIdForm] = useState(id);
+  const [roomForm, setRoomForm] = useState(room);
+  const [coordForm, setCoordForm] = useState(coord);
+  const [signalForm, setSignalForm] = useState(signal);
+  const modalContext = useContext(ModalContext);
+  const utils = trpc.useContext();
+  const updateFingerprint = trpc.fingerprint.updateFingerprint.useMutation({
+    onMutate: () => {
+      utils.fingerprint.getAllFingerprints.cancel();
+      const optimisticUpdate = utils.fingerprint.getAllFingerprints.getData();
+
+      if (optimisticUpdate) {
+        utils.fingerprint.getAllFingerprints.setData(optimisticUpdate);
+      }
+    },
+    onSettled: () => {
+      utils.fingerprint.getAllFingerprints.invalidate();
+    },
+  });
+
+  return (
+    <form
+      className="flex flex-col gap-2 p-4"
+      onSubmit={(event) => {
+        event.preventDefault();
+        updateFingerprint.mutate({
+          id: idForm,
+          room: roomForm,
+          coord: coordForm,
+          signal: signalForm,
+        });
+        setRoomForm("");
+        setCoordForm("");
+        setSignalForm("");
+        modalContext?.setShowModal(false);
+      }}
+    >
+      <input
+        type="text"
+        value={roomForm}
+        minLength={2}
+        maxLength={100}
+        onChange={(event) => setRoomForm(event.target.value)}
+        className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
+      />
+      <input
+        type="text"
+        value={coordForm}
+        minLength={2}
+        maxLength={100}
+        onChange={(event) => setCoordForm(event.target.value)}
+        className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2  focus:outline-none"
+      />
+      <input
+        type="text"
+        value={signalForm}
+        minLength={2}
+        maxLength={100}
+        onChange={(event) => setSignalForm(event.target.value)}
         className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
       />
       <button
