@@ -60,10 +60,10 @@ export const fingerprintRouter = router({
   updateFingerprint: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
-        room: z.string(),
-        coord: z.string(),
-        signal: z.string(),
+        id: z.optional(z.string()),
+        room: z.optional(z.string()),
+        coord: z.optional(z.string()),
+        signal: z.optional(z.string()),
       })
     )
     .mutation(async ({ ctx, input }) => {

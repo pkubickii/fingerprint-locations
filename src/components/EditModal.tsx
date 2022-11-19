@@ -17,6 +17,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const handleClose = (e: MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget.id === "wrapper") onClose();
   };
+
   return (
     <>
       <div
