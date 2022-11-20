@@ -2,8 +2,10 @@ import { trpc } from "../utils/trpc";
 import { useContext } from "react";
 import { EditIdContext } from "../context/EditIdContext";
 import { ModalContext } from "../context/ModalContext";
+import { useSession } from "next-auth/react";
 
 const FingerLocations: React.FC = () => {
+  const { data: sessionData } = useSession();
   const editContext = useContext(EditIdContext);
   const modalContext = useContext(ModalContext);
   const handleEdit = (id: string) => {
@@ -31,7 +33,7 @@ const FingerLocations: React.FC = () => {
   if (isLoading) return <div>Pobieram fingerprinty ...</div>;
 
   return (
-    <div className="m-10 flex flex-row gap-4">
+    <div className="cols-4 m-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
       {fingerprints?.map((fingerprint, index) => {
         return (
           <section
@@ -39,14 +41,32 @@ const FingerLocations: React.FC = () => {
             key={index}
           >
             <p>{fingerprint.room}</p>
-            <p>Koordynaty: {fingerprint.coord}</p>
-            <p>Siła sygnału: {fingerprint.signal}</p>
-            <button
-              onClick={() => deleteFingerprint.mutate({ id: fingerprint.id })}
-            >
-              Delete
-            </button>
-            <button onClick={() => handleEdit(fingerprint.id)}>Edit</button>
+            <p>
+              Koordynaty:
+              <br /> {fingerprint.coord}
+            </p>
+            <p>
+              Siła sygnału:
+              <br /> {fingerprint.signal}
+            </p>
+            {sessionData && (
+              <>
+                <button
+                  className="mt-5 rounded border-2 border-zinc-800 from-inherit to-inherit hover:border-green-400 hover:bg-gradient-to-br"
+                  onClick={() => handleEdit(fingerprint.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="mt-5 mb-1 rounded border-2 border-zinc-800 from-inherit to-inherit hover:border-2 hover:border-red-700 hover:bg-gradient-to-br"
+                  onClick={() =>
+                    deleteFingerprint.mutate({ id: fingerprint.id })
+                  }
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </section>
         );
       })}

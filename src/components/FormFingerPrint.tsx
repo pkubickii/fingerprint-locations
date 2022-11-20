@@ -23,7 +23,7 @@ const FormFingerPrint: React.FC = () => {
 
   return (
     <form
-      className="flex gap-2"
+      className="mb-5 mt-5 flex flex-col gap-3 md:flex-row"
       onSubmit={(event) => {
         event.preventDefault();
         postFingerprint.mutate({
