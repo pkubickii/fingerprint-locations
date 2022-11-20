@@ -8,6 +8,7 @@ import { ModalContext } from "../context/ModalContext";
 import { EditIdContext } from "../context/EditIdContext";
 import { useContext } from "react";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   const modalContext = useContext(ModalContext);
@@ -20,7 +21,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="justify-top-5 container mx-auto flex min-h-screen flex-col items-center p-4">
+      <main className="justify-top-5 container mx-auto flex min-h-screen flex-col items-center p-3 min-[390px]:p-4">
         <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
           Fingerprint <span className="text-sky-400">locations</span>
         </h1>
@@ -39,6 +40,7 @@ const Home: NextPage = () => {
           </EditModal>
         </div>
       </main>
+      <Footer />
     </>
   );
 };

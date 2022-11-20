@@ -33,14 +33,17 @@ const FingerLocations: React.FC = () => {
   if (isLoading) return <div>Pobieram fingerprinty ...</div>;
 
   return (
-    <div className="cols-4 m-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    <div className="cols-4 m-1 mt-10 grid grid-cols-1 gap-4 min-[390px]:m-10 min-[390px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
       {fingerprints?.map((fingerprint, index) => {
         return (
           <section
             className="flex flex-col justify-center rounded border-2 border-gray-500 from-sky-100 to-sky-500 p-6 shadow-xl duration-500 hover:bg-gradient-to-br motion-safe:hover:scale-105"
             key={index}
           >
-            <p>{fingerprint.room}</p>
+            <p>
+              Nr pokoju: <br />
+              {fingerprint.room}
+            </p>
             <p>
               Koordynaty:
               <br /> {fingerprint.coord}
