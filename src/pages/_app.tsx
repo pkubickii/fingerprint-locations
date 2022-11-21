@@ -3,7 +3,7 @@ import { type Session } from "next-auth";
 import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import { EditIdContext } from "../context/EditIdContext";
-import { ModalContext } from "../context/ModalContext";
+import { EditModalContext } from "../context/EditModalContext";
 import { trpc } from "../utils/trpc";
 import "../styles/globals.css";
 
@@ -11,15 +11,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editId, setEditId] = useState("");
   return (
     <SessionProvider session={session}>
-      <ModalContext.Provider value={{ showModal, setShowModal }}>
+      <EditModalContext.Provider value={{ showEditModal, setShowEditModal }}>
         <EditIdContext.Provider value={{ editId, setEditId }}>
           <Component {...pageProps} />
         </EditIdContext.Provider>
-      </ModalContext.Provider>
+      </EditModalContext.Provider>
     </SessionProvider>
   );
 };

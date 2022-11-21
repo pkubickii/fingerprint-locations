@@ -1,17 +1,17 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import EditModal from "../components/EditModal";
+import Modal from "../components/Modal";
 import AuthWrapper from "../components/AuthWrapper";
 import FingerLocations from "../components/FingerLocations";
 import FormUpdateFingerPrint from "../components/FormUpdateFingerPrint";
-import { ModalContext } from "../context/ModalContext";
+import { EditModalContext } from "../context/EditModalContext";
 import { EditIdContext } from "../context/EditIdContext";
 import { useContext } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
-  const modalContext = useContext(ModalContext);
+  const modalContext = useContext(EditModalContext);
   const editIdContext = useContext(EditIdContext);
   return (
     <>
@@ -32,12 +32,12 @@ const Home: NextPage = () => {
           <AuthWrapper />
         </div>
         <div>
-          <EditModal
-            isVisible={modalContext?.showModal ?? false}
-            onClose={() => modalContext?.setShowModal(false)}
+          <Modal
+            isVisible={modalContext?.showEditModal ?? false}
+            onClose={() => modalContext?.setShowEditModal(false)}
           >
             <FormUpdateFingerPrint id={editIdContext?.editId ?? ""} />
-          </EditModal>
+          </Modal>
         </div>
       </main>
       <Footer />

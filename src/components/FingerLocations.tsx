@@ -1,17 +1,22 @@
 import { trpc } from "../utils/trpc";
 import { useContext } from "react";
 import { EditIdContext } from "../context/EditIdContext";
-import { ModalContext } from "../context/ModalContext";
+import { EditModalContext } from "../context/EditModalContext";
 import { useSession } from "next-auth/react";
+import { FaSatelliteDish } from "react-icons/fa";
 
 const FingerLocations: React.FC = () => {
   const { data: sessionData } = useSession();
   const editContext = useContext(EditIdContext);
-  const modalContext = useContext(ModalContext);
-  const handleEdit = (id: string) => {
+  const editModalContext = useContext(EditModalContext);
+  const handleEdit = (id: string): void => {
     editContext?.setEditId(id);
-    modalContext?.setShowModal(true);
+    editModalContext?.setShowEditModal(true);
   };
+  function handleBeacons(id: string): void {
+    editContext?.setEditId(id);
+    editModalContext?.setShowEditModal(true);
+  }
   const { data: fingerprints, isLoading } =
     trpc.fingerprint.getAllFingerprints.useQuery();
 
@@ -37,7 +42,7 @@ const FingerLocations: React.FC = () => {
       {fingerprints?.map((fingerprint, index) => {
         return (
           <section
-            className="flex flex-col justify-center rounded border-2 border-gray-500 from-sky-100 to-sky-500 p-6 shadow-xl duration-500 hover:bg-gradient-to-br motion-safe:hover:scale-105"
+            className="flex flex-col justify-center rounded border-2 border-gray-500 from-sky-100 to-sky-500 p-6 shadow-xl duration-500 hover:bg-gradient-to-br motion-safe:hover:scale-105 xl:w-48"
             key={index}
           >
             <p>
@@ -61,13 +66,21 @@ const FingerLocations: React.FC = () => {
                   Edit
                 </button>
                 <button
-                  className="mt-5 mb-1 rounded border-2 border-zinc-800 from-inherit to-inherit hover:border-2 hover:border-red-700 hover:bg-gradient-to-br"
+                  className="mt-5 mb-5 rounded border-2 border-zinc-800 from-inherit to-inherit hover:border-2 hover:border-red-700 hover:bg-gradient-to-br"
                   onClick={() =>
                     deleteFingerprint.mutate({ id: fingerprint.id })
                   }
                 >
                   Delete
                 </button>
+                <div className="h-12 text-center">
+                  <button
+                    className="rounded-2xl border-sky-800 from-transparent to-inherit p-3 hover:border-2 hover:bg-gradient-to-br"
+                    onClick={() => handleBeacons(fingerprint.id)}
+                  >
+                    <FaSatelliteDish />
+                  </button>
+                </div>
               </>
             )}
           </section>

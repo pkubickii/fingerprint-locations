@@ -1,17 +1,13 @@
 import type { MouseEvent } from "react";
 import React from "react";
 
-type EditModalProps = {
+type ModalProps = {
   isVisible: boolean;
   onClose: () => void;
   children: React.ReactNode;
 };
 
-const EditModal: React.FC<EditModalProps> = ({
-  isVisible,
-  onClose,
-  children,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isVisible, onClose, children }) => {
   if (!isVisible) return null;
 
   const handleClose = (e: MouseEvent<HTMLDivElement>) => {
@@ -43,4 +39,4 @@ const EditModal: React.FC<EditModalProps> = ({
     </>
   );
 };
-export default EditModal;
+export default Modal;

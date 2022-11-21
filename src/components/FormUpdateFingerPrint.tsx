@@ -1,6 +1,6 @@
 import { trpc } from "../utils/trpc";
 import { useContext, useState } from "react";
-import { ModalContext } from "../context/ModalContext";
+import { EditModalContext } from "../context/EditModalContext";
 
 type FormUpdateProps = {
   id: string;
@@ -9,7 +9,7 @@ const FormUpdateFingerPrint: React.FC<FormUpdateProps> = ({ id }) => {
   const [room, setRoom] = useState("");
   const [coord, setCoord] = useState("");
   const [signal, setSignal] = useState("");
-  const modalContext = useContext(ModalContext);
+  const editModalContext = useContext(EditModalContext);
   const utils = trpc.useContext();
   const updateFingerprint = trpc.fingerprint.updateFingerprint.useMutation({
     onMutate: () => {
@@ -49,7 +49,7 @@ const FormUpdateFingerPrint: React.FC<FormUpdateProps> = ({ id }) => {
 
   if (!fingerprint) {
     console.error("data from useQuery is null!");
-    modalContext?.setShowModal(false);
+    editModalContext?.setShowEditModal(false);
     return null;
   }
   return (
@@ -63,7 +63,7 @@ const FormUpdateFingerPrint: React.FC<FormUpdateProps> = ({ id }) => {
           coord: coord,
           signal: signal,
         });
-        modalContext?.setShowModal(false);
+        editModalContext?.setShowEditModal(false);
       }}
     >
       <input
