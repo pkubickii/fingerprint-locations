@@ -53,10 +53,16 @@ const FingerLocations: React.FC = () => {
               Koordynaty:
               <br /> {fingerprint.coord}
             </p>
-            <p>
-              Siła sygnału:
-              <br /> {fingerprint.signal}
-            </p>
+            <div className="">
+              {fingerprint.beacons?.map((beacon, index) => {
+                return (
+                  <div key={index}>
+                    <p>{beacon.name}</p>
+                    <p>{beacon.power}</p>
+                  </div>
+                );
+              })}
+            </div>
             {sessionData && (
               <>
                 <button

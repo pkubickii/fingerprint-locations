@@ -28,9 +28,7 @@ const Home: NextPage = () => {
         <div>
           <FingerLocations />
         </div>
-        <div className="mt-8">
-          <AuthWrapper />
-        </div>
+        <div className="mt-8"></div>
         <div>
           <Modal
             isVisible={modalContext?.showEditModal ?? false}

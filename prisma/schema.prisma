@@ -22,10 +22,18 @@ datasource db {
 //}
 
 model Fingerprint_locations {
-  id        String   @id @default(cuid())
-  room      String
-  coord     String?
-  signal    String?
+  id     String   @id @default(cuid())
+  room   String   
+  coord  String?
+  beacons Beacon[]
+}
+
+model Beacon {
+  id    String @id @default(cuid())
+  name  String @unique
+  power String
+  roomId String @unique
+  fingerPrint Fingerprint_locations @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model Example {

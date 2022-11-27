@@ -9,7 +9,7 @@ export const fingerprintRouter = router({
           id: true,
           room: true,
           coord: true,
-          signal: true,
+          beacons: true,
         },
         orderBy: {
           room: "desc",
@@ -41,7 +41,10 @@ export const fingerprintRouter = router({
       z.object({
         room: z.string(),
         coord: z.string(),
-        signal: z.string(),
+        beacons: z.object({
+          name: z.string(),
+          power: z.string(),
+        }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -50,7 +53,12 @@ export const fingerprintRouter = router({
           data: {
             room: input.room,
             coord: input.coord,
-            signal: input.signal,
+            beacons: {
+              create: {
+                name: input.beacons.name,
+                power: input.beacons.power,
+              },
+            },
           },
         });
       } catch (error) {
@@ -63,7 +71,10 @@ export const fingerprintRouter = router({
         id: z.optional(z.string()),
         room: z.optional(z.string()),
         coord: z.optional(z.string()),
-        signal: z.optional(z.string()),
+        beacons: z.object({
+          name: z.string(),
+          power: z.string(),
+        }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -75,7 +86,12 @@ export const fingerprintRouter = router({
           data: {
             room: input.room,
             coord: input.coord,
-            signal: input.signal,
+            beacons: {
+              create: {
+                name: input.beacons.name,
+                power: input.beacons.power,
+              },
+            },
           },
         });
       } catch (error) {
