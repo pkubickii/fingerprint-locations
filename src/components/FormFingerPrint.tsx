@@ -1,10 +1,10 @@
 import { trpc } from "../utils/trpc";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 const FormFingerPrint: React.FC = () => {
   const [room, setRoom] = useState("");
   const [coord, setCoord] = useState("");
-  const [signal, setSignal] = useState("");
+  const [beacons, setBeacons] = useState({ name: "", power: "" });
 
   const utils = trpc.useContext();
   const postFingerprint = trpc.fingerprint.postFingerprint.useMutation({
@@ -21,27 +21,34 @@ const FormFingerPrint: React.FC = () => {
     },
   });
 
+  function handleBeaconChange(event: ChangeEvent<HTMLInputElement>): void {
+    setBeacons({
+      ...beacons,
+      [event.target.name]: event.target.value,
+    });
+  }
+
   return (
     <form
-      className="mb-5 mt-5 flex flex-col gap-3 lg:flex-row"
+      className="mb-5 mt-5 flex flex-col gap-3 xl:flex-row"
       onSubmit={(event) => {
         event.preventDefault();
         postFingerprint.mutate({
           room,
           coord,
-          signal,
+          beacons,
         });
         setRoom("");
         setCoord("");
-        setSignal("");
+        setBeacons({ name: "", power: "" });
       }}
     >
       <input
         type="text"
         value={room}
         placeholder="Numer pokoju"
-        minLength={2}
-        maxLength={100}
+        minLength={1}
+        maxLength={10}
         onChange={(event) => setRoom(event.target.value)}
         className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
       />
@@ -49,18 +56,29 @@ const FormFingerPrint: React.FC = () => {
         type="text"
         value={coord}
         placeholder="Koordynaty"
-        minLength={2}
-        maxLength={100}
+        minLength={3}
+        maxLength={20}
         onChange={(event) => setCoord(event.target.value)}
         className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2  focus:outline-none"
       />
       <input
         type="text"
-        value={signal}
-        placeholder="Siła sygnału"
+        name="name"
+        value={beacons.name}
+        placeholder="Nazwa beacona"
         minLength={2}
-        maxLength={100}
-        onChange={(event) => setSignal(event.target.value)}
+        maxLength={20}
+        onChange={(event) => handleBeaconChange(event)}
+        className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
+      />
+      <input
+        type="text"
+        name="power"
+        value={beacons.power}
+        placeholder="Siła sygnału"
+        minLength={1}
+        maxLength={5}
+        onChange={(event) => handleBeaconChange(event)}
         className="rounded-md border-2 border-zinc-800 bg-sky-100 px-4 py-2 focus:outline-none"
       />
       <button

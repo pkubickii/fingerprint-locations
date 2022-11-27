@@ -21,18 +21,20 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, children }) => {
         id="wrapper"
         onClick={handleClose}
       >
-        <div className="flex w-[600px] flex-col">
+        <div className="flex w-auto flex-col">
           <button
-            className="place-self-end text-2xl text-white"
+            className="place-self-end text-2xl text-rose-600"
             onClick={() => onClose()}
           >
             X
           </button>
           <div
             onClick={(e) => e.stopPropagation()}
-            className="rounded-xl bg-white p-2"
+            className="rounded-xl bg-sky-300 p-2"
           >
-            <div>{children}</div>
+            <div className="flex items-center justify-center p-5">
+              {children}
+            </div>
           </div>
         </div>
       </div>

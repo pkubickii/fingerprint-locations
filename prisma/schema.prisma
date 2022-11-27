@@ -30,9 +30,9 @@ model Fingerprint_locations {
 
 model Beacon {
   id    String @id @default(cuid())
-  name  String @unique
+  name  String
   power String
-  roomId String @unique
+  roomId String 
   fingerPrint Fingerprint_locations @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 

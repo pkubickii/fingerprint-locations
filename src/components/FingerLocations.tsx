@@ -4,18 +4,20 @@ import { EditIdContext } from "../context/EditIdContext";
 import { EditModalContext } from "../context/EditModalContext";
 import { useSession } from "next-auth/react";
 import { FaSatelliteDish } from "react-icons/fa";
+import { BeaconsModalContext } from "../context/BeaconsModalContext";
 
 const FingerLocations: React.FC = () => {
   const { data: sessionData } = useSession();
   const editContext = useContext(EditIdContext);
   const editModalContext = useContext(EditModalContext);
+  const beaconsModalContext = useContext(BeaconsModalContext);
   const handleEdit = (id: string): void => {
     editContext?.setEditId(id);
     editModalContext?.setShowEditModal(true);
   };
   function handleBeacons(id: string): void {
     editContext?.setEditId(id);
-    editModalContext?.setShowEditModal(true);
+    beaconsModalContext?.setShowBeaconsModal(true);
   }
   const { data: fingerprints, isLoading } =
     trpc.fingerprint.getAllFingerprints.useQuery();
@@ -53,16 +55,6 @@ const FingerLocations: React.FC = () => {
               Koordynaty:
               <br /> {fingerprint.coord}
             </p>
-            <div className="">
-              {fingerprint.beacons?.map((beacon, index) => {
-                return (
-                  <div key={index}>
-                    <p>{beacon.name}</p>
-                    <p>{beacon.power}</p>
-                  </div>
-                );
-              })}
-            </div>
             {sessionData && (
               <>
                 <button

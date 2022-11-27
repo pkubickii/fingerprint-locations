@@ -9,9 +9,12 @@ import { EditIdContext } from "../context/EditIdContext";
 import { useContext } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { BeaconsModalContext } from "../context/BeaconsModalContext";
+import ShowBeacons from "../components/ShowBeacons";
 
 const Home: NextPage = () => {
-  const modalContext = useContext(EditModalContext);
+  const editModalContext = useContext(EditModalContext);
+  const beaconsModalContext = useContext(BeaconsModalContext);
   const editIdContext = useContext(EditIdContext);
   return (
     <>
@@ -28,13 +31,23 @@ const Home: NextPage = () => {
         <div>
           <FingerLocations />
         </div>
-        <div className="mt-8"></div>
+        <div className="mt-8">
+          <AuthWrapper />
+        </div>
         <div>
           <Modal
-            isVisible={modalContext?.showEditModal ?? false}
-            onClose={() => modalContext?.setShowEditModal(false)}
+            isVisible={editModalContext?.showEditModal ?? false}
+            onClose={() => editModalContext?.setShowEditModal(false)}
           >
             <FormUpdateFingerPrint id={editIdContext?.editId ?? ""} />
+          </Modal>
+        </div>
+        <div>
+          <Modal
+            isVisible={beaconsModalContext?.showBeaconsModal ?? false}
+            onClose={() => beaconsModalContext?.setShowBeaconsModal(false)}
+          >
+            <ShowBeacons id={editIdContext?.editId ?? ""} />
           </Modal>
         </div>
       </main>

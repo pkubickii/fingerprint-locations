@@ -28,6 +28,12 @@ export const fingerprintRouter = router({
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.fingerprint_locations.findUnique({
+          select: {
+            id: true,
+            room: true,
+            coord: true,
+            beacons: true,
+          },
           where: {
             id: input.id,
           },
@@ -71,10 +77,6 @@ export const fingerprintRouter = router({
         id: z.optional(z.string()),
         room: z.optional(z.string()),
         coord: z.optional(z.string()),
-        beacons: z.object({
-          name: z.string(),
-          power: z.string(),
-        }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -86,12 +88,6 @@ export const fingerprintRouter = router({
           data: {
             room: input.room,
             coord: input.coord,
-            beacons: {
-              create: {
-                name: input.beacons.name,
-                power: input.beacons.power,
-              },
-            },
           },
         });
       } catch (error) {
